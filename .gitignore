@@ -1,9 +1,9 @@
+```gitignore
 # Compiled and build artifacts
 *.pyc
 __pycache__/
 *.o
 *.obj
-*.class
 *.exe
 *.dll
 *.so
@@ -18,33 +18,24 @@ venv/
 .env.local
 .env.*
 
-# Build directories
-dist/
-build/
-target/
-
-# Python specific
-*.pyc
-__pycache__/
-.pytest_cache/
-.mypy_cache/
-.coverage
-coverage/
-htmlcov/
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+*.swo
 
 # Editors
 .vscode/
 .idea/
-*.swp
-*.swo
 
 # System files
 .DS_Store
 Thumbs.db
 
-# Logs and temp files
-*.log
-*.tmp
+# Coverage
+coverage/
+htmlcov/
+.coverage
 
 # Compressed files
 *.zip
@@ -70,25 +61,25 @@ Thumbs.db
 *.tar.xz
 *.tar.zst
 
-# Gradle
+# Build directories
+dist/
+build/
+target/
 .gradle/
 
-# Julia
-.julia/
+# Python specific
+.mypy_cache/
+.pytest_cache/
 
-# Zig
-zig-cache/
-zig-out/
+# Java specific
+*.class
 
-# Temporary files
-*.tmp
-*.temp
-*.bak
-*.backup
-
-# OS generated files
-ehthumbs.db
-Icon?
-Network Trash Folder
-Temporary Items
-.Trash-*
+# C/C++ specific
+*.a
+*.o
+*.obj
+*.so
+*.dll
+*.exe
+*.out
+```

@@ -14,6 +14,40 @@ const PALETTE=[
 ];
 const palOf=L=>PALETTE[ALPHA.indexOf(L)%PALETTE.length];
 
+/* Cache de áudios carregados */
+const audioCache={};
+
+/* Carrega arquivo MP3 do banco de áudios */
+function loadAudioFile(path){
+  return new Promise((resolve,reject)=>{
+    if(audioCache[path]){resolve(audioCache[path]);return;}
+    const audio=new Audio(path);
+    audio.addEventListener('canplaythrough',()=>{
+      audioCache[path]=audio;
+      resolve(audio);
+    });
+    audio.addEventListener('error',()=>reject(new Error(`Failed to load: ${path}`)));
+    audio.load();
+  });
+}
+
+/* Tenta tocar fonema ou nome via MP3, fallback para TTS */
+async function playLetterAudio(L,type){
+  const folder=type==='fonema'?'fonema':'letras';
+  const filename=`${L.toLowerCase()}.mp3`;
+  const path=`audio/${folder}/${filename}`;
+  
+  try{
+    const audio=await loadAudioFile(path);
+    audio.currentTime=0;
+    await audio.play();
+    return true;
+  }catch(e){
+    // Fallback para síntese de voz se MP3 não existir
+    return false;
+  }
+}
+
 /* ph = fonema falado {t:texto, r:velocidade, p:tom}
    Plosivas: fala acelerada => "bê/pê/quê" bem curtinho (convenção fônica). */
 const LETTERS={
@@ -101,12 +135,16 @@ function speak(text,{rate=1,pitch=1.05}={}){
     try{speechSynthesis.speak(u);}catch(e){}
   },60);
 }
-function speakPhoneme(L){const d=LETTERS[L];
-  if(d.silent)speak(H_SAY,{rate:.95,pitch:1.12});
-  else speak(d.ph.t,{rate:d.ph.r,pitch:d.ph.p||1.02});
+async function speakPhoneme(L){const d=LETTERS[L];
+  if(d.silent){speak(H_SAY,{rate:.95,pitch:1.12});return;}
+  const played=await playLetterAudio(L,'fonema');
+  if(!played)speak(d.ph.t,{rate:d.ph.r,pitch:d.ph.p||1.02});
 }
-function speakName(L){speak(LETTERS[L].nm,{rate:.95,pitch:1.05});}
-function speakByMode(L){state.mode==='som'?speakPhoneme(L):speakName(L);}
+async function speakName(L){
+  const played=await playLetterAudio(L,'letras');
+  if(!played)speak(LETTERS[L].nm,{rate:.95,pitch:1.05});
+}
+async function speakByMode(L){if(state.mode==='som')await speakPhoneme(L);else await speakName(L);}
 
 /* ---------- construção do teclado ---------- */
 const kb=document.getElementById('kb');
@@ -212,7 +250,7 @@ function rain(n=70){
 }
 
 /* ---------- interação ---------- */
-function pressKey(btn){
+async function pressKey(btn){
   if(state.locked)return;
   const L=btn.dataset.l;
   btn.classList.add('pressed');setTimeout(()=>btn.classList.remove('pressed'),170);
@@ -221,6 +259,7 @@ function pressKey(btn){
   spawnNote(r.left+r.width/2,r.top+r.height*.3);
   if(state.challenge){handleAnswer(L,btn);return;}
   showLetter(L);
+  await speakByMode(L);
 }
 
 /* modo som/nome */
@@ -229,7 +268,7 @@ function setMode(m){
   state.mode=m;
   modeSom.classList.toggle('on',m==='som');modeNome.classList.toggle('on',m==='nome');
   modeSom.setAttribute('aria-pressed',m==='som');modeNome.setAttribute('aria-pressed',m==='nome');
-  if(state.challenge){renderPrompt();setTimeout(speakTarget,500);}
+  if(state.challenge){renderPrompt();setTimeout(()=>speakTarget(),500);}
 }
 modeSom.addEventListener('click',()=>setMode('som'));
 modeNome.addEventListener('click',()=>setMode('nome'));
@@ -251,16 +290,16 @@ function renderPrompt(){
     <button type="button" class="btn btn-replay" id="btnReplay">🔊 Ouvir de novo</button>
     <div class="pmsg" id="pmsg"></div>
   </div>`;
-  document.getElementById('btnReplay').addEventListener('click',speakTarget);
+  document.getElementById('btnReplay').addEventListener('click',()=>speakTarget());
 }
-function speakTarget(){
+async function speakTarget(){
   if(!state.target)return;
-  state.mode==='som'?speakPhoneme(state.target):speakName(state.target);
+  if(state.mode==='som')await speakPhoneme(state.target);else await speakName(state.target);
 }
 function nextRound(){
   state.target=pickTarget();
   renderPrompt();
-  setTimeout(speakTarget,700);
+  setTimeout(()=>speakTarget(),700);
 }
 function handleAnswer(L,btn){
   if(!state.target)return;
@@ -283,7 +322,7 @@ function handleAnswer(L,btn){
     nope();
     const m=document.getElementById('pmsg');
     if(m){m.textContent='Ops! Ouça outra vez… 👂';m.classList.remove('on');void m.offsetWidth;m.classList.add('on');}
-    setTimeout(speakTarget,650);
+    setTimeout(()=>speakTarget(),650);
   }
 }
 function startChallenge(){
