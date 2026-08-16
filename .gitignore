@@ -1,36 +1,25 @@
-# Compiled and build artifacts
-*.pyc
-__pycache__/
-*.o
-*.obj
-*.class
-*.exe
-*.dll
-*.so
-*.a
-*.out
+```
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Environment
+.env
+.env.local
+*.env.*
 
 # Dependencies
 node_modules/
-venv/
-.venv/
-.env
-.env.local
-.env.*
+__pycache__/
+*.py[cod]
+*$py.class
 
-# Build directories
+# Build artifacts
 dist/
 build/
-target/
-
-# Python specific
-*.pyc
-__pycache__/
-.pytest_cache/
-.mypy_cache/
-.coverage
-coverage/
-htmlcov/
+*.so
+*.egg-info/
 
 # Editors
 .vscode/
@@ -38,13 +27,31 @@ htmlcov/
 *.swp
 *.swo
 
-# System files
+# OS
 .DS_Store
 Thumbs.db
 
-# Logs and temp files
-*.log
-*.tmp
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# Python specific
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+.installed.cfg
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.cache/
+.pytest_cache/
+.mypy_cache/
 
 # Compressed files
 *.zip
@@ -69,26 +76,4 @@ Thumbs.db
 *.tar.bz2
 *.tar.xz
 *.tar.zst
-
-# Gradle
-.gradle/
-
-# Julia
-.julia/
-
-# Zig
-zig-cache/
-zig-out/
-
-# Temporary files
-*.tmp
-*.temp
-*.bak
-*.backup
-
-# OS generated files
-ehthumbs.db
-Icon?
-Network Trash Folder
-Temporary Items
-.Trash-*
+```

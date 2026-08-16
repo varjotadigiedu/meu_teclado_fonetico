@@ -173,3 +173,62 @@ h1.title span.sp{width:.45em}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
 }
+
+/* ============ grade de fonemas completos ============ */
+#phoneme-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:14px;
+  padding:20px;
+  max-width:1200px;
+  margin:0 auto;
+}
+
+.phoneme-card{
+  background:#fff;
+  border:3px solid #333;
+  border-radius:16px;
+  padding:16px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 6px 0 #333;
+  transition:transform 0.15s,box-shadow 0.15s;
+  font-family:'Lilita One',sans-serif;
+}
+
+.phoneme-card:hover{
+  transform:translateY(-4px) scale(1.03);
+  box-shadow:0 10px 0 #333;
+}
+
+.phoneme-card:active{
+  transform:translateY(4px);
+  box-shadow:0 2px 0 #333;
+}
+
+.phoneme-symbol{
+  font-size:2.8rem;
+  color:#2e6ed9;
+  line-height:1;
+  margin-bottom:8px;
+}
+
+.phoneme-name{
+  font-size:1.1rem;
+  color:#333;
+  margin-bottom:6px;
+}
+
+.phoneme-example{
+  font-size:0.9rem;
+  color:#666;
+  font-style:italic;
+}
+
+/* Cores por tipo de fonema */
+.phoneme-card.vogal-oral{background:#ffe5e5;border-color:#ff5d5d;}
+.phoneme-card.vogal-nasal{background:#e5f0ff;border-color:#4d96ff;}
+.phoneme-card.consoante-oclusiva{background:#e5ffe5;border-color:#5ecc71;}
+.phoneme-card.consoante-fricativa{background:#fff5e5;border-color:#ff9f43;}
+.phoneme-card.consoante-nasal{background:#f0e5ff;border-color:#b983ff;}
+.phoneme-card.consoante-liquida{background:#e5ffff;border-color:#4dd0c5;}
