@@ -82,6 +82,107 @@ const H_SAY='Shhhh! O H não tem som! Ele é silencioso!';
 const ROUNDS=5;
 const state={mode:'som',challenge:false,stars:0,target:null,lastTarget:null,lastLetter:null,locked:false};
 
+/* ========== MODO FONEMAS COMPLETOS (31 fonemas) ========== */
+// Lista completa dos 31 fonemas do Português Brasileiro
+const PHONEMES = [
+    // Vogais Orais (7)
+    { symbol: 'a', name: 'a', example: 'mar', type: 'vogal-oral', ipa: 'a' },
+    { symbol: 'e', name: 'e fechado', example: 'medo', type: 'vogal-oral', ipa: 'e' },
+    { symbol: 'ɛ', name: 'e aberto', example: 'pé', type: 'vogal-oral', ipa: 'ɛ' },
+    { symbol: 'i', name: 'i', example: 'vida', type: 'vogal-oral', ipa: 'i' },
+    { symbol: 'o', name: 'o fechado', example: 'doce', type: 'vogal-oral', ipa: 'o' },
+    { symbol: 'ɔ', name: 'o aberto', example: 'pó', type: 'vogal-oral', ipa: 'ɔ' },
+    { symbol: 'u', name: 'u', example: 'tudo', type: 'vogal-oral', ipa: 'u' },
+    
+    // Vogais Nasais (5)
+    { symbol: 'ã', name: 'ã', example: 'fã', type: 'vogal-nasal', ipa: 'ã' },
+    { symbol: 'ẽ', name: 'ẽ', example: 'sento', type: 'vogal-nasal', ipa: 'ẽ' },
+    { symbol: 'ĩ', name: 'ĩ', example: 'lindo', type: 'vogal-nasal', ipa: 'ĩ' },
+    { symbol: 'õ', name: 'õ', example: 'ponte', type: 'vogal-nasal', ipa: 'õ' },
+    { symbol: 'ũ', name: 'ũ', example: 'mundo', type: 'vogal-nasal', ipa: 'ũ' },
+    
+    // Consoantes Oclusivas (6)
+    { symbol: 'p', name: 'pê', example: 'pato', type: 'consoante-oclusiva', ipa: 'p' },
+    { symbol: 'b', name: 'bê', example: 'bola', type: 'consoante-oclusiva', ipa: 'b' },
+    { symbol: 't', name: 'tê', example: 'tempo', type: 'consoante-oclusiva', ipa: 't' },
+    { symbol: 'd', name: 'dê', example: 'dado', type: 'consoante-oclusiva', ipa: 'd' },
+    { symbol: 'k', name: 'cá/quê', example: 'casa', type: 'consoante-oclusiva', ipa: 'k' },
+    { symbol: 'g', name: 'gá/guê', example: 'gato', type: 'consoante-oclusiva', ipa: 'g' },
+    
+    // Consoantes Fricativas (6)
+    { symbol: 'f', name: 'efe', example: 'faca', type: 'consoante-fricativa', ipa: 'f' },
+    { symbol: 'v', name: 'vê', example: 'vela', type: 'consoante-fricativa', ipa: 'v' },
+    { symbol: 's', name: 'esse', example: 'sapo', type: 'consoante-fricativa', ipa: 's' },
+    { symbol: 'z', name: 'zê', example: 'zebra', type: 'consoante-fricativa', ipa: 'z' },
+    { symbol: 'ʃ', name: 'xe', example: 'chave', type: 'consoante-fricativa', ipa: 'ʃ' },
+    { symbol: 'ʒ', name: 'je', example: 'jacaré', type: 'consoante-fricativa', ipa: 'ʒ' },
+    
+    // Consoantes Nasais (3)
+    { symbol: 'm', name: 'eme', example: 'mala', type: 'consoante-nasal', ipa: 'm' },
+    { symbol: 'n', name: 'ene', example: 'navio', type: 'consoante-nasal', ipa: 'n' },
+    { symbol: 'ɲ', name: 'enhe', example: 'banho', type: 'consoante-nasal', ipa: 'ɲ' },
+    
+    // Consoantes Líquidas (4)
+    { symbol: 'l', name: 'ele', example: 'laranja', type: 'consoante-liquida', ipa: 'l' },
+    { symbol: 'ʎ', name: 'elhe', example: 'folha', type: 'consoante-liquida', ipa: 'ʎ' },
+    { symbol: 'r', name: 'erre brando', example: 'caro', type: 'consoante-liquida', ipa: 'ɾ' },
+    { symbol: 'R', name: 'erre forte', example: 'rato', type: 'consoante-liquida', ipa: 'ʁ' }
+];
+
+// Função para carregar áudio de fonema
+async function playPhonemeAudio(symbol){
+    const path = `audio/fonema/${symbol}.mp3`;
+    try{
+        const audio = await loadAudioFile(path);
+        audio.currentTime = 0;
+        await audio.play();
+        return true;
+    }catch(e){
+        return false;
+    }
+}
+
+// Falar fonema usando TTS como fallback
+function speakPhonemeBySymbol(symbol, name){
+    if(!HAS_TTS) return;
+    clearTimeout(speakTimer);
+    try{speechSynthesis.cancel();}catch(e){}
+    speakTimer=setTimeout(()=>{
+        const u = new SpeechSynthesisUtterance(name);
+        u.lang = 'pt-BR';
+        if(voice) u.voice = voice;
+        u.rate = 0.8;
+        u.pitch = 1.0;
+        u.volume = 1;
+        try{speechSynthesis.speak(u);}catch(e){}
+    }, 60);
+}
+
+// Criar grade de fonemas se existir o elemento
+function createPhonemeGrid(){
+    const grid = document.getElementById('phoneme-grid');
+    if(!grid) return;
+    
+    grid.innerHTML = '';
+    PHONEMES.forEach(ph => {
+        const card = document.createElement('div');
+        card.className = `phoneme-card ${ph.type}`;
+        card.innerHTML = `
+            <div class="phoneme-symbol">${ph.symbol}</div>
+            <div class="phoneme-name">${ph.name}</div>
+            <div class="phoneme-example">${ph.example}</div>
+        `;
+        card.addEventListener('click', async () => {
+            const played = await playPhonemeAudio(ph.symbol);
+            if(!played) speakPhonemeBySymbol(ph.symbol, ph.name);
+        });
+        grid.appendChild(card);
+    });
+}
+
+// Inicializar grade de fonemas ao carregar
+document.addEventListener('DOMContentLoaded', createPhonemeGrid);
+
 /* ---------- áudio musical (Web Audio) ---------- */
 let actx=null;
 function ensureAudio(){
