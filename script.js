@@ -180,8 +180,25 @@ function createPhonemeGrid(){
     });
 }
 
-// Inicializar grade de fonemas ao carregar
-document.addEventListener('DOMContentLoaded', createPhonemeGrid);
+// Alternar visibilidade da seção de fonemas completos
+function togglePhonemesSection(){
+    const section = document.getElementById('phonemesSection');
+    const btn = document.getElementById('btnTogglePhonemes');
+    if(!section || !btn) return;
+    
+    const isHidden = section.style.display === 'none' || section.style.display === '';
+    section.style.display = isHidden ? 'block' : 'none';
+    btn.textContent = isHidden ? '🔘 Ocultar fonemas' : '🎯 Ver todos os 31 fonemas';
+}
+
+// Inicializar grade de fonemas e botão ao carregar
+document.addEventListener('DOMContentLoaded', ()=>{
+    createPhonemeGrid();
+    const btn = document.getElementById('btnTogglePhonemes');
+    if(btn){
+        btn.addEventListener('click', togglePhonemesSection);
+    }
+});
 
 /* ---------- áudio musical (Web Audio) ---------- */
 let actx=null;
