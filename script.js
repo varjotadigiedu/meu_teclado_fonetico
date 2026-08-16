@@ -86,47 +86,47 @@ const state={mode:'som',challenge:false,stars:0,target:null,lastTarget:null,last
 // Lista completa dos 31 fonemas do Português Brasileiro
 const PHONEMES = [
     // Vogais Orais (7)
-    { symbol: 'a', name: 'a', example: 'mar', type: 'vogal-oral', ipa: 'a' },
-    { symbol: 'e', name: 'e fechado', example: 'medo', type: 'vogal-oral', ipa: 'e' },
-    { symbol: 'ɛ', name: 'e aberto', example: 'pé', type: 'vogal-oral', ipa: 'ɛ' },
-    { symbol: 'i', name: 'i', example: 'vida', type: 'vogal-oral', ipa: 'i' },
-    { symbol: 'o', name: 'o fechado', example: 'doce', type: 'vogal-oral', ipa: 'o' },
-    { symbol: 'ɔ', name: 'o aberto', example: 'pó', type: 'vogal-oral', ipa: 'ɔ' },
-    { symbol: 'u', name: 'u', example: 'tudo', type: 'vogal-oral', ipa: 'u' },
+    { symbol: 'a', name: 'a', example: 'mar', type: 'vogal-oral', ipa: 'a', graphemes: ['a'], examples: [{word: 'm**a**r', highlight: 'a'}, {word: 'c**a**sa', highlight: 'a'}, {word: 'b**a**la', highlight: 'a'}] },
+    { symbol: 'e', name: 'e fechado', example: 'medo', type: 'vogal-oral', ipa: 'e', graphemes: ['e'], examples: [{word: 'm**e**do', highlight: 'e'}, {word: 'p**e**lo', highlight: 'e'}, {word: 'd**e**nte', highlight: 'e'}] },
+    { symbol: 'ɛ', name: 'e aberto', example: 'pé', type: 'vogal-oral', ipa: 'ɛ', graphemes: ['e', 'é', 'ê'], examples: [{word: 'p**é**', highlight: 'é'}, {word: 'caf**é**', highlight: 'é'}, {word: 'l**e**ite', highlight: 'e'}] },
+    { symbol: 'i', name: 'i', example: 'vida', type: 'vogal-oral', ipa: 'i', graphemes: ['i'], examples: [{word: 'v**i**da', highlight: 'i'}, {word: 'l**i**vro', highlight: 'i'}, {word: 'n**i**to', highlight: 'i'}] },
+    { symbol: 'o', name: 'o fechado', example: 'doce', type: 'vogal-oral', ipa: 'o', graphemes: ['o'], examples: [{word: 'd**o**ce', highlight: 'o'}, {word: 'b**o**la', highlight: 'o'}, {word: 'p**o**vo', highlight: 'o'}] },
+    { symbol: 'ɔ', name: 'o aberto', example: 'pó', type: 'vogal-oral', ipa: 'ɔ', graphemes: ['o', 'ó', 'ô'], examples: [{word: 'p**ó**', highlight: 'ó'}, {word: 'av**ó**', highlight: 'ó'}, {word: 'p**o**rta', highlight: 'o'}] },
+    { symbol: 'u', name: 'u', example: 'tudo', type: 'vogal-oral', ipa: 'u', graphemes: ['u'], examples: [{word: 't**u**do', highlight: 'u'}, {word: 'l**u**a', highlight: 'u'}, {word: 'm**u**ro', highlight: 'u'}] },
     
     // Vogais Nasais (5)
-    { symbol: 'ã', name: 'ã', example: 'fã', type: 'vogal-nasal', ipa: 'ã' },
-    { symbol: 'ẽ', name: 'ẽ', example: 'sento', type: 'vogal-nasal', ipa: 'ẽ' },
-    { symbol: 'ĩ', name: 'ĩ', example: 'lindo', type: 'vogal-nasal', ipa: 'ĩ' },
-    { symbol: 'õ', name: 'õ', example: 'ponte', type: 'vogal-nasal', ipa: 'õ' },
-    { symbol: 'ũ', name: 'ũ', example: 'mundo', type: 'vogal-nasal', ipa: 'ũ' },
+    { symbol: 'ã', name: 'ã', example: 'fã', type: 'vogal-nasal', ipa: 'ã', graphemes: ['ã', 'am', 'an'], examples: [{word: 'f**ã**', highlight: 'ã'}, {word: 'c**am**po', highlight: 'am'}, {word: 's**an**to', highlight: 'an'}] },
+    { symbol: 'ẽ', name: 'ẽ', example: 'sento', type: 'vogal-nasal', ipa: 'ẽ', graphemes: ['em', 'en'], examples: [{word: 's**en**to', highlight: 'en'}, {word: 'b**em**', highlight: 'em'}, {word: 'm**en**ino', highlight: 'en'}] },
+    { symbol: 'ĩ', name: 'ĩ', example: 'lindo', type: 'vogal-nasal', ipa: 'ĩ', graphemes: ['im', 'in'], examples: [{word: 'l**in**do', highlight: 'in'}, {word: 's**im**', highlight: 'im'}, {word: 't**in**ta', highlight: 'in'}] },
+    { symbol: 'õ', name: 'õ', example: 'ponte', type: 'vogal-nasal', ipa: 'õ', graphemes: ['õ', 'om', 'on'], examples: [{word: 'p**on**te', highlight: 'on'}, {word: 'b**om**', highlight: 'om'}, {word: 'c**or**ação', highlight: 'õ'}] },
+    { symbol: 'ũ', name: 'ũ', example: 'mundo', type: 'vogal-nasal', ipa: 'ũ', graphemes: ['um', 'un'], examples: [{word: 'm**un**do', highlight: 'un'}, {word: 'alg**um**', highlight: 'um'}, {word: '**um**', highlight: 'um'}] },
     
     // Consoantes Oclusivas (6)
-    { symbol: 'p', name: 'pê', example: 'pato', type: 'consoante-oclusiva', ipa: 'p' },
-    { symbol: 'b', name: 'bê', example: 'bola', type: 'consoante-oclusiva', ipa: 'b' },
-    { symbol: 't', name: 'tê', example: 'tempo', type: 'consoante-oclusiva', ipa: 't' },
-    { symbol: 'd', name: 'dê', example: 'dado', type: 'consoante-oclusiva', ipa: 'd' },
-    { symbol: 'k', name: 'cá/quê', example: 'casa', type: 'consoante-oclusiva', ipa: 'k' },
-    { symbol: 'g', name: 'gá/guê', example: 'gato', type: 'consoante-oclusiva', ipa: 'g' },
+    { symbol: 'p', name: 'pê', example: 'pato', type: 'consoante-oclusiva', ipa: 'p', graphemes: ['p'], examples: [{word: '**p**ato', highlight: 'p'}, {word: '**p**ele', highlight: 'p'}, {word: 'ca**mp**o', highlight: 'p'}] },
+    { symbol: 'b', name: 'bê', example: 'bola', type: 'consoante-oclusiva', ipa: 'b', graphemes: ['b'], examples: [{word: '**b**ola', highlight: 'b'}, {word: '**b**oca', highlight: 'b'}, {word: 'tam**b**ém', highlight: 'b'}] },
+    { symbol: 't', name: 'tê', example: 'tempo', type: 'consoante-oclusiva', ipa: 't', graphemes: ['t'], examples: [{word: '**t**empo', highlight: 't'}, {word: '**t**oalha', highlight: 't'}, {word: 'ga**t**o', highlight: 't'}] },
+    { symbol: 'd', name: 'dê', example: 'dado', type: 'consoante-oclusiva', ipa: 'd', graphemes: ['d'], examples: [{word: '**d**ado', highlight: 'd'}, {word: '**d**edo', highlight: 'd'}, {word: 'sau**d**ade', highlight: 'd'}] },
+    { symbol: 'k', name: 'cá/quê', example: 'casa', type: 'consoante-oclusiva', ipa: 'k', graphemes: ['c', 'qu', 'k'], examples: [{word: '**c**asa', highlight: 'c'}, {word: '**qu**ejo', highlight: 'qu'}, {word: '**k**iwi', highlight: 'k'}] },
+    { symbol: 'g', name: 'gá/guê', example: 'gato', type: 'consoante-oclusiva', ipa: 'g', graphemes: ['g', 'gu'], examples: [{word: '**g**ato', highlight: 'g'}, {word: '**gu**erra', highlight: 'gu'}, {word: 'fo**g**o', highlight: 'g'}] },
     
     // Consoantes Fricativas (6)
-    { symbol: 'f', name: 'efe', example: 'faca', type: 'consoante-fricativa', ipa: 'f' },
-    { symbol: 'v', name: 'vê', example: 'vela', type: 'consoante-fricativa', ipa: 'v' },
-    { symbol: 's', name: 'esse', example: 'sapo', type: 'consoante-fricativa', ipa: 's' },
-    { symbol: 'z', name: 'zê', example: 'zebra', type: 'consoante-fricativa', ipa: 'z' },
-    { symbol: 'ʃ', name: 'xe', example: 'chave', type: 'consoante-fricativa', ipa: 'ʃ' },
-    { symbol: 'ʒ', name: 'je', example: 'jacaré', type: 'consoante-fricativa', ipa: 'ʒ' },
+    { symbol: 'f', name: 'efe', example: 'faca', type: 'consoante-fricativa', ipa: 'f', graphemes: ['f'], examples: [{word: '**f**aca', highlight: 'f'}, {word: '**f**ogo', highlight: 'f'}, {word: 'sof**á**', highlight: 'f'}] },
+    { symbol: 'v', name: 'vê', example: 'vela', type: 'consoante-fricativa', ipa: 'v', graphemes: ['v'], examples: [{word: '**v**ela', highlight: 'v'}, {word: '**v**ida', highlight: 'v'}, {word: 'no**v**o', highlight: 'v'}] },
+    { symbol: 's', name: 'esse', example: 'sapo', type: 'consoante-fricativa', ipa: 's', graphemes: ['s', 'ss', 'ç', 'c', 'sc', 'xc'], examples: [{word: '**s**apo', highlight: 's'}, {word: 'ca**ss**a', highlight: 'ss'}, {word: 'ça**p**ato', highlight: 'ç'}, {word: '**c**edo', highlight: 'c'}] },
+    { symbol: 'z', name: 'zê', example: 'zebra', type: 'consoante-fricativa', ipa: 'z', graphemes: ['z', 's'], examples: [{word: '**z**ebra', highlight: 'z'}, {word: 'ca**s**a', highlight: 's'}, {word: 'me**s**a', highlight: 's'}] },
+    { symbol: 'ʃ', name: 'xe', example: 'chave', type: 'consoante-fricativa', ipa: 'ʃ', graphemes: ['ch', 'x'], examples: [{word: '**ch**ave', highlight: 'ch'}, {word: '**x**adrez', highlight: 'x'}, {word: 'pei**x**e', highlight: 'x'}] },
+    { symbol: 'ʒ', name: 'je', example: 'jacaré', type: 'consoante-fricativa', ipa: 'ʒ', graphemes: ['j', 'g'], examples: [{word: '**j**acaré', highlight: 'j'}, {word: '**g**elo', highlight: 'g'}, {word: 'via**g**em', highlight: 'g'}] },
     
     // Consoantes Nasais (3)
-    { symbol: 'm', name: 'eme', example: 'mala', type: 'consoante-nasal', ipa: 'm' },
-    { symbol: 'n', name: 'ene', example: 'navio', type: 'consoante-nasal', ipa: 'n' },
-    { symbol: 'ɲ', name: 'enhe', example: 'banho', type: 'consoante-nasal', ipa: 'ɲ' },
+    { symbol: 'm', name: 'eme', example: 'mala', type: 'consoante-nasal', ipa: 'm', graphemes: ['m'], examples: [{word: '**m**ala', highlight: 'm'}, {word: '**m**esa', highlight: 'm'}, {word: 'so**m**', highlight: 'm'}] },
+    { symbol: 'n', name: 'ene', example: 'navio', type: 'consoante-nasal', ipa: 'n', graphemes: ['n'], examples: [{word: '**n**avio', highlight: 'n'}, {word: '**n**inho', highlight: 'n'}, {word: 'bo**m**', highlight: 'n'}] },
+    { symbol: 'ɲ', name: 'enhe', example: 'banho', type: 'consoante-nasal', ipa: 'ɲ', graphemes: ['nh'], examples: [{word: 'ba**nh**o', highlight: 'nh'}, {word: 'ni**nh**o', highlight: 'nh'}, {word: 'so**nh**o', highlight: 'nh'}] },
     
     // Consoantes Líquidas (4)
-    { symbol: 'l', name: 'ele', example: 'laranja', type: 'consoante-liquida', ipa: 'l' },
-    { symbol: 'ʎ', name: 'elhe', example: 'folha', type: 'consoante-liquida', ipa: 'ʎ' },
-    { symbol: 'r', name: 'erre brando', example: 'caro', type: 'consoante-liquida', ipa: 'ɾ' },
-    { symbol: 'R', name: 'erre forte', example: 'rato', type: 'consoante-liquida', ipa: 'ʁ' }
+    { symbol: 'l', name: 'ele', example: 'laranja', type: 'consoante-liquida', ipa: 'l', graphemes: ['l'], examples: [{word: '**l**aranja', highlight: 'l'}, {word: '**l**ivro', highlight: 'l'}, {word: 'so**l**', highlight: 'l'}] },
+    { symbol: 'ʎ', name: 'elhe', example: 'folha', type: 'consoante-liquida', ipa: 'ʎ', graphemes: ['lh'], examples: [{word: 'fo**lh**a', highlight: 'lh'}, {word: 'fi**lh**o', highlight: 'lh'}, {word: 'traba**lh**o', highlight: 'lh'}] },
+    { symbol: 'r', name: 'erre brando', example: 'caro', type: 'consoante-liquida', ipa: 'ɾ', graphemes: ['r'], examples: [{word: 'ca**r**o', highlight: 'r'}, {word: 'a**r**ara', highlight: 'r'}, {word: 'ba**r**ata', highlight: 'r'}] },
+    { symbol: 'R', name: 'erre forte', example: 'rato', type: 'consoante-liquida', ipa: 'ʁ', graphemes: ['r', 'rr'], examples: [{word: '**r**ato', highlight: 'r'}, {word: 'ca**rr**o', highlight: 'rr'}, {word: 'po**r**ta', highlight: 'r'}] }
 ];
 
 // Função para carregar áudio de fonema
@@ -258,6 +258,7 @@ function renderCompletePhonemeKeyboard(){
             b.addEventListener('click', async ()=>{
                 const played = await playPhonemeAudio(symbol);
                 if(!played) speakPhonemeBySymbol(symbol, ph.name);
+                showPhonemeDetails(ph);
             });
             r.appendChild(b);gi++;
         });
@@ -272,6 +273,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if(btn){
         btn.addEventListener('click', togglePhonemesSection);
     }
+    
+    // Renderizar palco inicial
+    renderStageDefault();
 });
 
 /* ---------- áudio musical (Web Audio) ---------- */
@@ -396,6 +400,65 @@ function showLetter(L){
   rp&&rp.addEventListener('click',()=>speakByMode(L));
   w&&w.addEventListener('click',()=>speak(LETTERS[L].word,{rate:.95,pitch:1.08}));
   speakByMode(L);
+}
+
+/* ---------- detalhes do fonema (modo completo) ---------- */
+function formatWordHighlight(wordWithMarkers){
+  // Transforma "**p**ato" em "<span class='highlight'>p</span>ato"
+  return wordWithMarkers.replace(/\*\*(.+?)\*\*/g, '<span class="highlight">$1</span>');
+}
+
+function phonemeDetailsHTML(ph){
+  const graphemesList = ph.graphemes.join(', ');
+  const examplesHTML = ph.examples.map(ex => 
+    `<div class="example-item">${formatWordHighlight(ex.word)}</div>`
+  ).join('');
+  
+  const typeLabel = {
+    'vogal-oral': 'Vogal Oral',
+    'vogal-nasal': 'Vogal Nasal',
+    'consoante-oclusiva': 'Consoante Oclusiva',
+    'consoante-fricativa': 'Consoante Fricativa',
+    'consoante-nasal': 'Consoante Nasal',
+    'consoante-liquida': 'Consoante Líquida'
+  }[ph.type] || ph.type;
+  
+  return `<div class="phoneme-detail">
+    <div class="phoneme-header">
+      <div class="phoneme-symbol-large">/${ph.symbol}/</div>
+      <div class="phoneme-type-badge">${typeLabel}</div>
+    </div>
+    <div class="phoneme-info">
+      <div class="info-section">
+        <div class="info-label">🔊 Som do fonema</div>
+        <button type="button" class="btn-audio-phoneme" id="btnPhonemeAudio">🔊 Ouvir som</button>
+      </div>
+      <div class="info-section">
+        <div class="info-label">✍️ Formas de escrita (grafemas)</div>
+        <div class="graphemes-list">${graphemesList}</div>
+      </div>
+      <div class="info-section">
+        <div class="info-label">📚 Exemplos de palavras</div>
+        <div class="examples-list">${examplesHTML}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function showPhonemeDetails(ph){
+  stageBox.innerHTML = phonemeDetailsHTML(ph);
+  
+  // Tocar áudio do fonema ao clicar no botão
+  const btnAudio = document.getElementById('btnPhonemeAudio');
+  if(btnAudio){
+    btnAudio.addEventListener('click', async ()=>{
+      const played = await playPhonemeAudio(ph.symbol);
+      if(!played) speakPhonemeBySymbol(ph.symbol, ph.name);
+    });
+  }
+  
+  // Tocar áudio automaticamente
+  playPhonemeAudio(ph.symbol).catch(()=>speakPhonemeBySymbol(ph.symbol, ph.name));
 }
 
 /* ---------- efeitos ---------- */
