@@ -237,7 +237,7 @@ function renderCompletePhonemeKeyboard(){
         ['l', 'ʎ', 'r', 'R']
     ];
     
-    let gi = 0;
+    gi = 0;
     const typeColors = {
         'vogal-oral': {c:'#ff9f43',d:'#d07417',i:'#fff'},
         'vogal-nasal': {c:'#ffd93d',d:'#cfa707',i:'#5b4300'},
