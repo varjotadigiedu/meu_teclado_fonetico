@@ -256,7 +256,7 @@ h1.title span.sp{width:.45em}
 }
 
 .phoneme-symbol-large{
-  font-family:'Lilita One',sans-serif;
+  font-family:'Noto Sans',sans-serif;
   font-size:clamp(3rem,8vw,5rem);
   color:#2e6ed9;
   line-height:1;
