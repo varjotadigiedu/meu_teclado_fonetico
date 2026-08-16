@@ -1,1 +1,8 @@
-Nothing needs to be added to .gitignore since only source files (.js and .css) were modified and no build artifacts, dependencies, or temporary files were detected in the changes.
+```
+# Logs
+*.log
+
+# Audio cache/temp files
+audio/**/*.tmp
+audio/**/*.cache
+```

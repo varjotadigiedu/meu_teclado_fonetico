@@ -144,8 +144,8 @@ h1.title span.sp{width:.45em}
 @keyframes goodpulse{40%{transform:scale(1.18);filter:brightness(1.25)}}
 
 /* Teclas de fonemas no modo completo */
-.phoneme-key .kl{font-size:clamp(1.2rem,3.5vw,1.9rem)}
-.phoneme-key .ke{font-size:clamp(0.65rem,1.6vw,0.9rem);opacity:.9}
+.phoneme-key .kl{font-size:clamp(1.2rem,3.5vw,1.9rem);font-family:'Noto Sans',sans-serif}
+.phoneme-key .ke{font-size:clamp(0.65rem,1.6vw,0.9rem);opacity:.9;font-family:'Noto Sans',sans-serif}
 
 /* ============ efeitos ============ */
 .fnote{position:fixed;z-index:1100;font-size:28px;font-weight:900;pointer-events:none;animation:fnote 1.05s ease-out forwards;text-shadow:0 2px 0 rgba(0,0,0,.15)}
