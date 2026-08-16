@@ -1,31 +1,33 @@
-```
+```gitignore
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+*.o
+*.obj
+dist/
+build/
+target/
+
+# Dependencies
+node_modules/
+venv/
+.venv/
+.env
+.env.local
+.env.*
+
 # Logs and temp files
 *.log
 *.tmp
 *.swp
 
-# Environment
-.env
-.env.local
-*.env.*
-
-# Dependencies
-node_modules/
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Build artifacts
-dist/
-build/
-*.so
-*.egg-info/
-
 # Editors
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# OS
+# System files
 .DS_Store
 Thumbs.db
 
@@ -35,21 +37,12 @@ htmlcov/
 .coverage
 
 # Python specific
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-*.egg-info/
-.eggs/
-.installed.cfg
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
-.coverage
-.cache/
-.pytest_cache/
 .mypy_cache/
+.pytest_cache/
+
+# Java/Gradle
+.gradle/
+build/
 
 # Compressed files
 *.zip

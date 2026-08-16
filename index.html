@@ -56,8 +56,13 @@
     <!-- teclado -->
     <section class="keyboard" id="kb" aria-label="Teclado de letras"></section>
 
-    <!-- grade de fonemas completos (31 fonemas) -->
-    <section class="phonemes-section" style="margin-top:40px;padding:20px;background:#f5f9ff;border-radius:20px;border:3px dashed #4d96ff;">
+    <!-- botão para mostrar fonemas completos -->
+    <div style="text-align:center;margin-top:30px;">
+      <button type="button" class="btn btn-hunt" id="btnTogglePhonemes">🎯 Ver todos os 31 fonemas</button>
+    </div>
+
+    <!-- grade de fonemas completos (31 fonemas) - oculta por padrão -->
+    <section class="phonemes-section" id="phonemesSection" style="display:none;margin-top:40px;padding:20px;background:#f5f9ff;border-radius:20px;border:3px dashed #4d96ff;">
       <h2 style="text-align:center;font-family:'Lilita One',sans-serif;color:#2e6ed9;margin-bottom:10px;">🎯 Todos os 31 Fonemas do Português</h2>
       <p style="text-align:center;color:#666;margin-bottom:20px;">Clique em cada fonema para ouvir seu som!</p>
       <div id="phoneme-grid" aria-label="Grade de fonemas"></div>
