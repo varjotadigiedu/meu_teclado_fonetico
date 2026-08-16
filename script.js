@@ -189,8 +189,7 @@ function togglePhonemesSection(){
     
     btn.textContent = completeMode ? '⌨️ Voltar ao teclado normal' : '🎯 Ver todos os 31 fonemas';
     
-    // Recriar o teclado com o modo apropriado
-    kb.innerHTML = '';
+    // Recriar o teclado com o modo apropriado (as funções já limpam o kb.innerHTML)
     if(completeMode){
         renderCompletePhonemeKeyboard();
     }else{
@@ -200,6 +199,8 @@ function togglePhonemesSection(){
 
 // Renderizar teclado padrão (alfabeto)
 function renderStandardKeyboard(){
+    // Limpa o teclado antes de renderizar para evitar duplicação
+    kb.innerHTML = '';
     gi=0;
     ROWS.forEach(row=>{
         const r=document.createElement('div');r.className='kb-row';
@@ -219,6 +220,8 @@ function renderStandardKeyboard(){
 
 // Renderizar teclado completo com 31 fonemas
 function renderCompletePhonemeKeyboard(){
+    // Limpa o teclado antes de renderizar para evitar duplicação
+    kb.innerHTML = '';
     const phonemeRows = [
         // Vogais Orais (7)
         ['a', 'e', 'ɛ', 'i', 'o', 'ɔ', 'u'],
@@ -346,20 +349,7 @@ async function speakByMode(L){if(state.mode==='som')await speakPhoneme(L);else a
 const kb=document.getElementById('kb');
 const ROWS=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
 let gi=0;
-ROWS.forEach(row=>{
-  const r=document.createElement('div');r.className='kb-row';
-  [...row].forEach(ch=>{
-    const d=LETTERS[ch],pal=palOf(ch);
-    const b=document.createElement('button');
-    b.type='button';b.className='key';b.dataset.l=ch;
-    b.style.cssText=`--c:${pal.c};--cd:${pal.d};--ki:${pal.i};--i:${gi}`;
-    b.setAttribute('aria-label',`Letra ${ch}. Palavra: ${d.word}.`);
-    b.innerHTML=`<span class="kl">${ch}</span><span class="ke">${d.emoji}</span>`;
-    b.addEventListener('click',()=>pressKey(b));
-    r.appendChild(b);gi++;
-  });
-  kb.appendChild(r);
-});
+// A renderização inicial é feita pelo DOMContentLoaded para evitar duplicação
 const keyBtn=L=>document.querySelector(`.key[data-l="${L}"]`);
 
 /* ---------- palco ---------- */
