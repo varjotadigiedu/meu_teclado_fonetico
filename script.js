@@ -180,20 +180,94 @@ function createPhonemeGrid(){
     });
 }
 
-// Alternar visibilidade da seção de fonemas completos
+// Alternar entre teclado padrão e modo completo de fonemas
+let completeMode = false;
 function togglePhonemesSection(){
-    const section = document.getElementById('phonemesSection');
+    completeMode = !completeMode;
     const btn = document.getElementById('btnTogglePhonemes');
-    if(!section || !btn) return;
+    if(!btn) return;
     
-    const isHidden = section.style.display === 'none' || section.style.display === '';
-    section.style.display = isHidden ? 'block' : 'none';
-    btn.textContent = isHidden ? '🔘 Ocultar fonemas' : '🎯 Ver todos os 31 fonemas';
+    btn.textContent = completeMode ? '⌨️ Voltar ao teclado normal' : '🎯 Ver todos os 31 fonemas';
+    
+    // Recriar o teclado com o modo apropriado
+    kb.innerHTML = '';
+    if(completeMode){
+        renderCompletePhonemeKeyboard();
+    }else{
+        renderStandardKeyboard();
+    }
 }
 
-// Inicializar grade de fonemas e botão ao carregar
+// Renderizar teclado padrão (alfabeto)
+function renderStandardKeyboard(){
+    gi=0;
+    ROWS.forEach(row=>{
+        const r=document.createElement('div');r.className='kb-row';
+        [...row].forEach(ch=>{
+            const d=LETTERS[ch],pal=palOf(ch);
+            const b=document.createElement('button');
+            b.type='button';b.className='key';b.dataset.l=ch;
+            b.style.cssText=`--c:${pal.c};--cd:${pal.d};--ki:${pal.i};--i:${gi}`;
+            b.setAttribute('aria-label',`Letra ${ch}. Palavra: ${d.word}.`);
+            b.innerHTML=`<span class="kl">${ch}</span><span class="ke">${d.emoji}</span>`;
+            b.addEventListener('click',()=>pressKey(b));
+            r.appendChild(b);gi++;
+        });
+        kb.appendChild(r);
+    });
+}
+
+// Renderizar teclado completo com 31 fonemas
+function renderCompletePhonemeKeyboard(){
+    const phonemeRows = [
+        // Vogais Orais (7)
+        ['a', 'e', 'ɛ', 'i', 'o', 'ɔ', 'u'],
+        // Vogais Nasais (5)
+        ['ã', 'ẽ', 'ĩ', 'õ', 'ũ'],
+        // Consoantes Oclusivas (6)
+        ['p', 'b', 't', 'd', 'k', 'g'],
+        // Consoantes Fricativas (6)
+        ['f', 'v', 's', 'z', 'ʃ', 'ʒ'],
+        // Consoantes Nasais (3)
+        ['m', 'n', 'ɲ'],
+        // Consoantes Líquidas (4)
+        ['l', 'ʎ', 'r', 'R']
+    ];
+    
+    let gi = 0;
+    const typeColors = {
+        'vogal-oral': {c:'#ff9f43',d:'#d07417',i:'#fff'},
+        'vogal-nasal': {c:'#ffd93d',d:'#cfa707',i:'#5b4300'},
+        'consoante-oclusiva': {c:'#ff5d5d',d:'#c93a3a',i:'#fff'},
+        'consoante-fricativa': {c:'#4dc06b',d:'#3fa44e',i:'#fff'},
+        'consoante-nasal': {c:'#4d96ff',d:'#2e6ed9',i:'#fff'},
+        'consoante-liquida': {c:'#b983ff',d:'#8b54d9',i:'#fff'}
+    };
+    
+    phonemeRows.forEach((row, rowIndex)=>{
+        const r=document.createElement('div');r.className='kb-row';
+        row.forEach(symbol=>{
+            const ph = PHONEMES.find(p => p.symbol === symbol);
+            if(!ph) return;
+            const colors = typeColors[ph.type] || typeColors['vogal-oral'];
+            const b=document.createElement('button');
+            b.type='button';b.className='key phoneme-key';b.dataset.phoneme=symbol;
+            b.style.cssText=`--c:${colors.c};--cd:${colors.d};--ki:${colors.i};--i:${gi}`;
+            b.setAttribute('aria-label',`Fonema ${symbol}. Exemplo: ${ph.example}.`);
+            b.innerHTML=`<span class="kl">/${symbol}/</span><span class="ke" style="font-size:0.8em">${ph.example}</span>`;
+            b.addEventListener('click', async ()=>{
+                const played = await playPhonemeAudio(symbol);
+                if(!played) speakPhonemeBySymbol(symbol, ph.name);
+            });
+            r.appendChild(b);gi++;
+        });
+        kb.appendChild(r);
+    });
+}
+
+// Inicializar teclado padrão e botão ao carregar
 document.addEventListener('DOMContentLoaded', ()=>{
-    createPhonemeGrid();
+    renderStandardKeyboard();
     const btn = document.getElementById('btnTogglePhonemes');
     if(btn){
         btn.addEventListener('click', togglePhonemesSection);
