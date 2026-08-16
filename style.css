@@ -236,3 +236,116 @@ h1.title span.sp{width:.45em}
 .phoneme-card.consoante-fricativa{background:#fff5e5;border-color:#ff9f43;}
 .phoneme-card.consoante-nasal{background:#f0e5ff;border-color:#b983ff;}
 .phoneme-card.consoante-liquida{background:#e5ffff;border-color:#4dd0c5;}
+
+/* ============ detalhes do fonema (modo completo) ============ */
+.phoneme-detail{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  width:100%;
+  max-width:700px;
+  margin:0 auto;
+}
+
+.phoneme-header{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.phoneme-symbol-large{
+  font-family:'Lilita One',sans-serif;
+  font-size:clamp(3rem,8vw,5rem);
+  color:#2e6ed9;
+  line-height:1;
+  animation:letterpop .45s cubic-bezier(.2,1.7,.4,1) both;
+}
+
+.phoneme-type-badge{
+  background:#fff3c9;
+  border:3px dashed #e0b93c;
+  border-radius:14px;
+  padding:6px 14px;
+  font-weight:800;
+  font-size:0.9rem;
+}
+
+.phoneme-info{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  background:#fff;
+  border:4px solid var(--ink);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:8px 8px 0 var(--ink-soft);
+}
+
+.info-section{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.info-label{
+  font-weight:900;
+  font-size:0.95rem;
+  color:var(--ink);
+}
+
+.btn-audio-phoneme{
+  background:#4dc06b;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  padding:10px 20px;
+  font-weight:900;
+  font-size:1rem;
+  box-shadow:0 5px 0 var(--ink-soft);
+  transition:transform .12s,box-shadow .12s;
+  cursor:pointer;
+  align-self:flex-start;
+}
+
+.btn-audio-phoneme:hover{
+  transform:translateY(-2px);
+  box-shadow:0 7px 0 var(--ink-soft);
+}
+
+.btn-audio-phoneme:active{
+  transform:translateY(2px);
+  box-shadow:0 2px 0 var(--ink-soft);
+}
+
+.graphemes-list{
+  background:#f0f8ff;
+  border:2px solid #4d96ff;
+  border-radius:12px;
+  padding:10px 14px;
+  font-weight:800;
+  font-size:1.1rem;
+  color:#2e6ed9;
+}
+
+.examples-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.example-item{
+  background:#fff5e5;
+  border:2px solid #ff9f43;
+  border-radius:10px;
+  padding:8px 12px;
+  font-weight:700;
+  font-size:1.05rem;
+}
+
+.example-item .highlight{
+  background:#ffd93d;
+  padding:0 4px;
+  border-radius:4px;
+  color:#5b4300;
+}
