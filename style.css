@@ -168,6 +168,41 @@ h1.title span.sp{width:.45em}
 .adult{margin-top:26px;background:#ffffffd9;border:3px solid var(--ink);border-radius:18px;padding:14px 18px;font-size:.83rem;font-weight:700;line-height:1.5;box-shadow:6px 6px 0 var(--ink-soft)}
 .adult .fine{opacity:.7;margin-top:6px}
 
+/* ============ modo teclado completo: palco lado a lado com os botões ============ */
+main.split-layout{
+  display:grid;
+  grid-template-columns:minmax(260px,1fr) minmax(320px,1.4fr);
+  grid-template-areas:
+    "controls controls"
+    "stage keyboard"
+    "toggle toggle"
+    "footer footer";
+  align-items:start;
+  gap:16px;
+}
+main.split-layout > .controls{grid-area:controls;margin-bottom:0}
+main.split-layout > #stage{
+  grid-area:stage;margin-bottom:0;
+  position:sticky;top:16px;
+  max-height:calc(100vh - 32px);overflow-y:auto;
+}
+main.split-layout > #kb{grid-area:keyboard}
+main.split-layout > .toggle-row{grid-area:toggle}
+main.split-layout > .adult{grid-area:footer}
+
+@media (max-width:900px){
+  main.split-layout{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "controls"
+      "stage"
+      "keyboard"
+      "toggle"
+      "footer";
+  }
+  main.split-layout > #stage{position:static;max-height:none}
+}
+
 @media (max-width:640px){
   .key{min-width:54px;max-width:80px;flex:0 1 auto;height:clamp(62px,15vw,84px);border-radius:14px}
   .bubble{display:none}

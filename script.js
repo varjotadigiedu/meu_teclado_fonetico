@@ -189,6 +189,10 @@ function togglePhonemesSection(){
     
     btn.textContent = completeMode ? '⌨️ Voltar ao teclado normal' : '🎯 Ver todos os 31 fonemas';
     
+    // No modo completo, o palco fica ao lado dos botões (em vez de em cima)
+    const mainArea = document.getElementById('mainArea');
+    if(mainArea) mainArea.classList.toggle('split-layout', completeMode);
+    
     // Recriar o teclado com o modo apropriado (as funções já limpam o kb.innerHTML)
     if(completeMode){
         renderCompletePhonemeKeyboard();
@@ -504,7 +508,6 @@ async function pressKey(btn){
   spawnNote(r.left+r.width/2,r.top+r.height*.3);
   if(state.challenge){handleAnswer(L,btn);return;}
   showLetter(L);
-  await speakByMode(L);
 }
 
 /* modo som/nome */
