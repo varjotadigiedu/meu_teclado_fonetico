@@ -80,7 +80,7 @@ const LETTERS={
 };
 const H_SAY='Shhhh! O H não tem som! Ele é silencioso!';
 const ROUNDS=5;
-const state={mode:'som',challenge:false,stars:0,target:null,lastTarget:null,lastLetter:null,locked:false};
+const state={mode:'som',challenge:false,syllableChallenge:false,stars:0,target:null,lastTarget:null,lastConsonant:null,lastLetter:null,locked:false};
 
 /* ========== MODO FONEMAS COMPLETOS (31 fonemas) ========== */
 // Lista completa dos 31 fonemas do Português Brasileiro
@@ -180,24 +180,46 @@ function createPhonemeGrid(){
     });
 }
 
-// Alternar entre teclado padrão e modo completo de fonemas
-let completeMode = false;
-function togglePhonemesSection(){
-    completeMode = !completeMode;
-    const btn = document.getElementById('btnTogglePhonemes');
-    if(!btn) return;
-    
-    btn.textContent = completeMode ? '⌨️ Voltar ao teclado normal' : '🎯 Ver todos os 31 fonemas';
-    
-    // No modo completo, o palco fica ao lado dos botões (em vez de em cima)
+// Alternar entre os 3 modos de visualização: alfabeto, fonemas completos, sílabas
+let viewMode = null;
+function setViewMode(mode){
+    if(mode===viewMode) return;
+    viewMode = mode;
+
+    // Sai de qualquer desafio ativo que não faça sentido no novo modo
+    if(mode!=='alfabeto' && state.challenge) exitChallenge();
+    if(mode!=='silabas' && state.syllableChallenge) exitSyllableChallenge();
+
+    // Botões do seletor de modo
+    ['alfabeto','fonemas','silabas'].forEach(m=>{
+        const b=document.getElementById('view'+m.charAt(0).toUpperCase()+m.slice(1));
+        if(b){b.classList.toggle('on',m===mode);b.setAttribute('aria-pressed',m===mode);}
+    });
+
+    // Sub-seletor "ver / costurando" só aparece no modo sílabas
+    const subSeg=document.getElementById('silabaSubSeg');
+    if(subSeg) subSeg.hidden = mode!=='silabas';
+
+    // No modo fonemas completos, o palco fica ao lado dos botões
     const mainArea = document.getElementById('mainArea');
-    if(mainArea) mainArea.classList.toggle('split-layout', completeMode);
-    
-    // Recriar o teclado com o modo apropriado (as funções já limpam o kb.innerHTML)
-    if(completeMode){
+    if(mainArea) mainArea.classList.toggle('split-layout', mode==='fonemas');
+
+    // Teclado: fonemas usa a grade própria; alfabeto e sílabas usam o teclado padrão
+    if(mode==='fonemas'){
         renderCompletePhonemeKeyboard();
     }else{
         renderStandardKeyboard();
+    }
+
+    // Palco inicial de cada modo
+    if(mode==='silabas'){
+        syllableSubMode='ver';
+        const silVer=document.getElementById('silVer'),silCostura=document.getElementById('silCostura');
+        if(silVer){silVer.classList.add('on');silVer.setAttribute('aria-pressed','true');}
+        if(silCostura){silCostura.classList.remove('on');silCostura.setAttribute('aria-pressed','false');}
+        renderSyllableIntro();
+    }else{
+        renderStageDefault();
     }
 }
 
@@ -275,15 +297,172 @@ function renderCompletePhonemeKeyboard(){
 
 // Inicializar teclado padrão e botão ao carregar
 document.addEventListener('DOMContentLoaded', ()=>{
-    renderStandardKeyboard();
-    const btn = document.getElementById('btnTogglePhonemes');
-    if(btn){
-        btn.addEventListener('click', togglePhonemesSection);
-    }
-    
-    // Renderizar palco inicial
-    renderStageDefault();
+    setViewMode('alfabeto');
+
+    const viewBtns=document.querySelectorAll('[data-view]');
+    viewBtns.forEach(b=>b.addEventListener('click',()=>setViewMode(b.dataset.view)));
+
+    const silVer=document.getElementById('silVer'),silCostura=document.getElementById('silCostura');
+    if(silVer) silVer.addEventListener('click',()=>setSyllableSubMode('ver'));
+    if(silCostura) silCostura.addEventListener('click',()=>setSyllableSubMode('costura'));
 });
+
+/* ========== MODO SÍLABAS ========== */
+const VOWELS=['A','E','I','O','U'];
+const CONSONANTS=ALPHA.split('').filter(l=>!VOWELS.includes(l)&&l!=='H');
+let syllableSubMode='ver'; // 'ver' | 'costura'
+let sylTarget=null, sylPicked=[];
+const SYL_ROUNDS=5;
+
+/* Monta o texto da sílaba (com ajuste simples para o Q, que sempre vem com U) */
+function syllableText(L,v){
+    if(L==='Q') return 'qu'+v.toLowerCase();
+    return L.toLowerCase()+v.toLowerCase();
+}
+
+function setSyllableSubMode(m){
+    if(m===syllableSubMode) return;
+    syllableSubMode=m;
+    const silVer=document.getElementById('silVer'),silCostura=document.getElementById('silCostura');
+    if(silVer){silVer.classList.toggle('on',m==='ver');silVer.setAttribute('aria-pressed',m==='ver');}
+    if(silCostura){silCostura.classList.toggle('on',m==='costura');silCostura.setAttribute('aria-pressed',m==='costura');}
+    if(m==='costura'){
+        startSyllableChallenge();
+    }else{
+        exitSyllableChallenge();
+    }
+}
+
+/* ---- "Ver sílabas": clicar numa consoante mostra sua família de sílabas ---- */
+function renderSyllableIntro(){
+    stageBox.innerHTML=`<div class="idle">
+    <div class="idle-emoji">🧩</div>
+    <div class="idle-t">Escolha uma consoante!</div>
+    <div class="idle-s">Toque numa letra como <b>B</b> ou <b>M</b> para ver e ouvir a família de sílabas dela.</div>
+  </div>`;
+}
+function renderVowelInfo(L){
+    const d=LETTERS[L],pal=palOf(L);
+    stageBox.innerHTML=`<div class="idle">
+    <div class="show-letter" style="color:${pal.d}">${L}</div>
+    <div class="idle-t">Vogal sozinha já é uma sílaba! 🎵</div>
+    <div class="idle-s">Ouça: <b>${L.toLowerCase()}</b> — como em <b>${d.word}</b></div>
+  </div>`;
+    speak(L.toLowerCase(),{rate:.85,pitch:1.1});
+}
+function renderSilentInfo(){
+    stageBox.innerHTML=`<div class="idle">
+    <div class="idle-emoji">🤫</div>
+    <div class="idle-t">O H sozinho não tem som!</div>
+    <div class="idle-s">Mas ele aparece em duplas especiais: <b>CH, LH, NH</b> 🎶</div>
+  </div>`;
+    speak('O H sozinho não tem som! Mas ele aparece em duplas: chá, filho, banho!',{rate:.95,pitch:1.1});
+}
+function speakSyllable(txt){speak(txt,{rate:.8,pitch:1.05});}
+async function speakSyllableSequence(list){
+    for(let i=0;i<list.length;i++){
+        setTimeout(()=>speakSyllable(list[i]),i*650);
+    }
+}
+function renderSyllableFamily(L){
+    const pal=palOf(L);
+    const syls=VOWELS.map(v=>syllableText(L,v));
+    const chips=syls.map(s=>`<button type="button" class="syl-chip" data-syl="${s}">${s}</button>`).join('');
+    stageBox.innerHTML=`<div class="syl-family">
+    <div class="syl-title" style="color:${pal.d}">Família do <span style="color:${pal.d}">${L}</span> 🧩</div>
+    <div class="syl-chips">${chips}</div>
+    <div class="show-tip" style="margin-top:12px">👅 Toque em cada sílaba para ouvir!</div>
+  </div>`;
+    stageBox.querySelectorAll('.syl-chip').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            speakSyllable(btn.dataset.syl);
+            btn.classList.add('pop');setTimeout(()=>btn.classList.remove('pop'),260);
+        });
+    });
+    speakSyllableSequence(syls);
+}
+
+/* ---- "Costurando sílabas": ouve a sílaba e escolhe as letras que a formam ---- */
+function renderSyllablePrompt(){
+    stageBox.innerHTML=`<div class="prompt">
+    <div class="pq">Que letras formam esse som? 🧩</div>
+    <div class="pemoji">👂</div>
+    <div class="syl-slots">
+      <span class="syl-slot" id="sylSlot0">?</span><span class="syl-slot" id="sylSlot1">?</span>
+    </div>
+    <button type="button" class="btn btn-replay" id="btnReplaySyl">🔊 Ouvir de novo</button>
+    <div class="pmsg" id="pmsgSyl"></div>
+  </div>`;
+    document.getElementById('btnReplaySyl').addEventListener('click',()=>speakSyllableTarget());
+}
+function speakSyllableTarget(){
+    if(!sylTarget)return;
+    speak(sylTarget.text,{rate:.8,pitch:1.05});
+}
+function pickSyllableTarget(){
+    let cons;do{cons=CONSONANTS[Math.floor(Math.random()*CONSONANTS.length)];}while(cons===state.lastConsonant&&CONSONANTS.length>1);
+    state.lastConsonant=cons;
+    const vowel=VOWELS[Math.floor(Math.random()*VOWELS.length)];
+    return {cons,vowel,text:syllableText(cons,vowel)};
+}
+function nextSyllableRound(){
+    sylTarget=pickSyllableTarget();
+    sylPicked=[];
+    renderSyllablePrompt();
+    setTimeout(()=>speakSyllableTarget(),700);
+}
+function syllableSuccessHTML(t){
+    return `<div class="show">
+    <div class="show-main" style="text-align:center;width:100%">
+      <div class="idle-t" style="color:#2e9e44">ACERTOU! 🎉</div>
+      <div class="show-word" style="margin-top:6px">${t.text}</div>
+    </div>
+  </div>`;
+}
+function handleSyllableAnswer(L,btn){
+    if(!sylTarget)return;
+    const idx=sylPicked.length;
+    const expected=idx===0?sylTarget.cons:sylTarget.vowel;
+    if(L===expected){
+        sylPicked.push(L);
+        btn.classList.add('good');setTimeout(()=>btn.classList.remove('good'),400);
+        const slot=document.getElementById('sylSlot'+idx);
+        if(slot){slot.textContent=L;slot.classList.add('filled');}
+        if(sylPicked.length===2){
+            state.locked=true;
+            arp();
+            const r=btn.getBoundingClientRect();
+            burst(r.left+r.width/2,r.top+r.height/2);
+            state.stars++;updateStars();
+            stage.classList.remove('yay');void stage.offsetWidth;stage.classList.add('yay');
+            stageBox.innerHTML=syllableSuccessHTML(sylTarget);
+            setTimeout(()=>speak(sylTarget.text,{rate:.9,pitch:1.1}),450);
+            setTimeout(()=>{
+                state.locked=false;
+                if(state.stars>=SYL_ROUNDS)celebrate();else nextSyllableRound();
+            },2100);
+        }else{
+            const m=document.getElementById('pmsgSyl');
+            if(m){m.textContent='Isso! Agora a vogal… 👂';m.classList.remove('on');void m.offsetWidth;m.classList.add('on');}
+        }
+    }else{
+        btn.classList.remove('shake');void btn.offsetWidth;btn.classList.add('shake');
+        nope();
+        const m=document.getElementById('pmsgSyl');
+        if(m){m.textContent='Ops! Tenta de novo… 👂';m.classList.remove('on');void m.offsetWidth;m.classList.add('on');}
+    }
+}
+function startSyllableChallenge(){
+    state.syllableChallenge=true;state.locked=false;state.stars=0;
+    updateStars();starsEl.hidden=false;
+    nextSyllableRound();
+}
+function exitSyllableChallenge(){
+    state.syllableChallenge=false;sylTarget=null;sylPicked=[];state.locked=false;
+    starsEl.hidden=true;
+    if(HAS_TTS)try{speechSynthesis.cancel();}catch(e){}
+    renderSyllableIntro();
+}
 
 /* ---------- áudio musical (Web Audio) ---------- */
 let actx=null;
@@ -314,19 +493,70 @@ const nope=()=>tone(150,{dur:.28,type:'sine',gain:.28});
 
 /* ---------- fala (Web Speech, pt-BR) ---------- */
 const HAS_TTS='speechSynthesis' in window;
-let voice=null,speakTimer=null;
+let voice=null,speakTimer=null,availableVoices=[];
+const VOICE_PREF_KEY='teclado_fonico_voice';
+
+/* Pontua a qualidade provável de cada voz instalada, para escolher a melhor automaticamente */
+function scoreVoice(v){
+  let s=0;
+  const l=(v.lang||'').toLowerCase().replace('_','-');
+  const n=(v.name||'').toLowerCase();
+  if(l==='pt-br')s+=10;else if(l.startsWith('pt'))s+=6;else return -100; // descarta vozes de outros idiomas
+  // vozes "online/natural/neural" costumam soar muito melhor que as locais compactas
+  if(/natural|online|neural|premium/.test(n))s+=6;
+  // vozes conhecidas de boa qualidade (Google/Microsoft/Apple, pt-BR)
+  if(/google/.test(n))s+=3;
+  if(/francisca|luciana|camila|vitória|vitoria|helena|joana|leticia|letícia|maria|ines|inês|antonia|antônia|daniel|nicole|humaita|humaitá/.test(n))s+=3;
+  // vozes tipicamente robóticas/baixa qualidade (comuns em Android antigo/Linux)
+  if(/espeak|compact|pico|robot|festival/.test(n))s-=8;
+  if(v.localService===false)s+=1; // vozes de nuvem tendem a soar mais natural
+  return s;
+}
 function loadVoices(){
   if(!HAS_TTS)return;
   const vs=speechSynthesis.getVoices(); if(!vs.length)return;
-  const sc=v=>{let s=0;const l=(v.lang||'').toLowerCase().replace('_','-');
-    if(l==='pt-br')s+=10;else if(l.startsWith('pt'))s+=7;
-    const n=(v.name||'').toLowerCase();
-    if(/google/.test(n))s+=2;
-    if(/francisca|luciana|maria|nicole|humia|antonia|daniel/.test(n))s+=2;
-    if(/natural|online/.test(n))s+=1;return s;};
-  voice=vs.slice().sort((a,b)=>sc(b)-sc(a))[0];
+  availableVoices=vs.filter(v=>(v.lang||'').toLowerCase().startsWith('pt'));
+  if(!availableVoices.length)availableVoices=vs; // sem pt disponível: mostra tudo mesmo assim
+
+  // se a pessoa já escolheu uma voz antes, respeita a escolha
+  let saved=null;
+  try{saved=localStorage.getItem(VOICE_PREF_KEY);}catch(e){}
+  const savedVoice=saved && vs.find(v=>v.name===saved);
+
+  voice = savedVoice || vs.slice().sort((a,b)=>scoreVoice(b)-scoreVoice(a))[0];
+  renderVoicePicker();
 }
 if(HAS_TTS){loadVoices();speechSynthesis.addEventListener&&speechSynthesis.addEventListener('voiceschanged',loadVoices);}
+
+/* Seletor de voz — deixa o adulto escolher manualmente a voz que soar melhor no aparelho */
+function renderVoicePicker(){
+  const wrap=document.getElementById('voicePickerWrap');
+  if(!wrap||!availableVoices.length)return;
+  if(wrap.dataset.built==='1')return; // monta só uma vez por lista de vozes carregada
+  wrap.dataset.built='1';
+  const sel=document.createElement('select');
+  sel.id='voiceSelect';
+  sel.setAttribute('aria-label','Escolher voz');
+  availableVoices.forEach(v=>{
+    const opt=document.createElement('option');
+    opt.value=v.name;opt.textContent=v.name+(v.localService===false?' (online)':'');
+    if(voice&&v.name===voice.name)opt.selected=true;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change',()=>{
+    const chosen=availableVoices.find(v=>v.name===sel.value);
+    if(chosen){
+      voice=chosen;
+      try{localStorage.setItem(VOICE_PREF_KEY,chosen.name);}catch(e){}
+      speak('Oi! Essa é a minha voz agora.',{rate:.95,pitch:1.08});
+    }
+  });
+  wrap.innerHTML='';
+  const label=document.createElement('label');
+  label.htmlFor='voiceSelect';label.textContent='🗣️ Voz: ';label.style.cssText='font-weight:800;margin-right:6px';
+  wrap.appendChild(label);wrap.appendChild(sel);
+}
+
 function speak(text,{rate=1,pitch=1.05}={}){
   if(!HAS_TTS||!text)return;
   clearTimeout(speakTimer);
@@ -507,6 +737,14 @@ async function pressKey(btn){
   const r=btn.getBoundingClientRect();
   spawnNote(r.left+r.width/2,r.top+r.height*.3);
   if(state.challenge){handleAnswer(L,btn);return;}
+  if(state.syllableChallenge){handleSyllableAnswer(L,btn);return;}
+  if(viewMode==='silabas'){
+    const d=LETTERS[L];
+    if(d.silent){renderSilentInfo();return;}
+    if(d.vow){renderVowelInfo(L);return;}
+    renderSyllableFamily(L);
+    return;
+  }
   showLetter(L);
 }
 
@@ -586,7 +824,12 @@ function exitChallenge(){
   if(HAS_TTS)try{speechSynthesis.cancel();}catch(e){}
   renderStageDefault();
 }
-btnHunt.addEventListener('click',()=>state.challenge?exitChallenge():startChallenge());
+btnHunt.addEventListener('click',()=>{
+  if(state.challenge){exitChallenge();return;}
+  if(viewMode!=='alfabeto') setViewMode('alfabeto');
+  if(state.syllableChallenge) setSyllableSubMode('ver');
+  startChallenge();
+});
 
 /* vitória */
 const overlay=document.getElementById('overlay');
@@ -596,9 +839,13 @@ function celebrate(){
   speak('Uau! Você ganhou cinco estrelas! Mandou muito bem!',{pitch:1.15,rate:.95});
 }
 document.getElementById('btnAgain').addEventListener('click',()=>{
-  overlay.hidden=true;state.stars=0;updateStars();nextRound();
+  overlay.hidden=true;state.stars=0;updateStars();
+  if(state.syllableChallenge)nextSyllableRound();else nextRound();
 });
-document.getElementById('btnFree').addEventListener('click',()=>{overlay.hidden=true;exitChallenge();});
+document.getElementById('btnFree').addEventListener('click',()=>{
+  overlay.hidden=true;
+  if(state.syllableChallenge)setSyllableSubMode('ver');else exitChallenge();
+});
 
 /* ---------- teclado físico + extras ---------- */
 addEventListener('keydown',e=>{
@@ -608,6 +855,7 @@ addEventListener('keydown',e=>{
   else if(e.code==='Space'){
     e.preventDefault();
     if(state.challenge)speakTarget();
+    else if(state.syllableChallenge)speakSyllableTarget();
     else if(state.lastLetter)speakByMode(state.lastLetter);
   }
 });
@@ -622,7 +870,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 /* tecla "piscando" para chamar atenção */
 setInterval(()=>{
-  if(document.hidden||state.challenge)return;
+  if(document.hidden||state.challenge||state.syllableChallenge)return;
   const keys=document.querySelectorAll('.key');
   const k=keys[Math.floor(Math.random()*keys.length)];
   k.classList.add('wiggle');setTimeout(()=>k.classList.remove('wiggle'),950);

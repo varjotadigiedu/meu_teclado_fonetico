@@ -56,15 +56,24 @@
     <!-- teclado -->
     <section class="keyboard" id="kb" aria-label="Teclado de letras"></section>
 
-    <!-- botão para mostrar fonemas completos -->
-    <div class="toggle-row" style="text-align:center;margin-top:30px;">
-      <button type="button" class="btn btn-hunt" id="btnTogglePhonemes">🎯 Ver todos os 31 fonemas</button>
+    <!-- alternância de modo de visualização -->
+    <div class="seg view-row" role="group" aria-label="Modo de visualização" style="margin:22px auto 0;justify-content:center;display:flex">
+      <button type="button" class="seg-btn on" id="viewAlfabeto" data-view="alfabeto" aria-pressed="true">⌨️ Alfabeto</button>
+      <button type="button" class="seg-btn" id="viewFonemas" data-view="fonemas" aria-pressed="false">🎯 31 Fonemas</button>
+      <button type="button" class="seg-btn" id="viewSilabas" data-view="silabas" aria-pressed="false">🧩 Sílabas</button>
+    </div>
+
+    <!-- sub-modo do modo sílabas -->
+    <div class="seg sil-row" role="group" aria-label="Modo de sílabas" id="silabaSubSeg" hidden style="margin:10px auto 0;justify-content:center;display:flex">
+      <button type="button" class="seg-btn on" id="silVer" aria-pressed="true">👀 Ver sílabas</button>
+      <button type="button" class="seg-btn" id="silCostura" aria-pressed="false">🧩 Costurando sílabas</button>
     </div>
 
     <!-- recado para adultos -->
     <footer class="adult">
       <p>👩‍🏫 <b>Para educadores:</b> o teclado apresenta o <b>fonema</b> de cada letra (base do método fônico). Sons contínuos são esticados (ffff, mmmm, ssss…) e as plosivas (B, C, D, G, K, P, Q, T) saem bem "curtinhas", com apoio mínimo de vogal — como se modela em sala. O H é trabalhado como letra silenciosa. Sugestão: a criança aperta, repete o som e procura na sala algo que comece com ele.</p>
       <p class="fine">🔈 As vozes vêm do próprio aparelho (Web Speech API, pt-BR) — Chrome e Edge têm as melhores. Dica de ouro: use "Som" para brincar e "Nome da letra" só para comparar.</p>
+      <p class="fine" id="voicePickerWrap" style="margin-top:8px"></p>
     </footer>
   </main>
 </div>

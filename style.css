@@ -107,8 +107,8 @@ h1.title span.sp{width:.45em}
 
 /* ============ controles ============ */
 .controls{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
-.seg{display:flex;background:#fff;border:3px solid var(--ink);border-radius:999px;overflow:hidden;box-shadow:0 5px 0 var(--ink-soft)}
-.seg-btn{border:0;background:transparent;padding:9px 16px;font-weight:900;font-size:.9rem;transition:background .15s}
+.seg{display:flex;background:#fff;border:3px solid var(--ink);border-radius:999px;overflow:hidden;box-shadow:0 5px 0 var(--ink-soft);max-width:100%}
+.seg-btn{border:0;background:transparent;padding:9px 16px;font-weight:900;font-size:.9rem;transition:background .15s;white-space:nowrap;flex:1 1 auto;min-width:0}
 .seg-btn.on{background:#ff9f43;color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.2)}
 .btn{border:3px solid var(--ink);border-radius:999px;padding:9px 18px;font-weight:900;font-size:.95rem;box-shadow:0 5px 0 var(--ink-soft);transition:transform .12s;background:#fff}
 .btn:hover{transform:translateY(-2px)}
@@ -167,6 +167,7 @@ h1.title span.sp{width:.45em}
 /* ============ rodapé adulto ============ */
 .adult{margin-top:26px;background:#ffffffd9;border:3px solid var(--ink);border-radius:18px;padding:14px 18px;font-size:.83rem;font-weight:700;line-height:1.5;box-shadow:6px 6px 0 var(--ink-soft)}
 .adult .fine{opacity:.7;margin-top:6px}
+#voiceSelect{font-family:inherit;font-weight:700;padding:4px 10px;border:2px solid var(--ink);border-radius:10px;background:#fff;max-width:100%}
 
 /* ============ modo teclado completo: palco lado a lado com os botões ============ */
 main.split-layout{
@@ -187,7 +188,7 @@ main.split-layout > #stage{
   max-height:calc(100vh - 32px);overflow-y:auto;
 }
 main.split-layout > #kb{grid-area:keyboard}
-main.split-layout > .toggle-row{grid-area:toggle}
+main.split-layout > .view-row{grid-area:toggle}
 main.split-layout > .adult{grid-area:footer}
 
 @media (max-width:900px){
@@ -204,14 +205,75 @@ main.split-layout > .adult{grid-area:footer}
 }
 
 @media (max-width:640px){
+  .wrap{padding:14px 10px 32px}
   .key{min-width:54px;max-width:80px;flex:0 1 auto;height:clamp(62px,15vw,84px);border-radius:14px}
   .bubble{display:none}
   .sun{width:64px;height:64px;top:14px;right:14px}
   .stage{padding:14px}
+  .seg-btn{padding:8px 10px;font-size:.78rem}
+  .btn{padding:8px 14px;font-size:.85rem}
+  .controls{gap:8px}
+  .ov-card{padding:24px 20px;max-width:92vw}
+  .adult{padding:12px 14px;font-size:.78rem}
 }
+
+/* telas bem pequenas (celulares estreitos, ~360px e menos) */
+@media (max-width:400px){
+  h1.title{font-size:clamp(1.35rem,7.5vw,1.9rem)}
+  .mascot{width:60px;height:60px;font-size:32px}
+  .tagline{font-size:.78rem;padding:3px 10px}
+  .key{min-width:44px;max-width:64px;height:clamp(54px,16vw,72px);gap:0;border-radius:12px}
+  .kl{font-size:clamp(1.2rem,7vw,1.7rem)}
+  .ke{font-size:clamp(.62rem,3.4vw,.85rem)}
+  .kb-row{gap:6px}
+  .keyboard{gap:6px}
+  .seg-btn{padding:7px 8px;font-size:.72rem}
+  .show-letter{font-size:clamp(3.2rem,20vw,5rem)}
+  .syl-slot{width:46px;height:46px;font-size:1.5rem}
+}
+
+/* celular em modo paisagem: pouca altura disponível */
+@media (max-height:480px) and (orientation:landscape){
+  .sun,.cloud,.hills,.amb{display:none}
+  header{margin-bottom:6px}
+  .mascot{width:52px;height:52px;font-size:28px}
+  .bubble{display:none}
+  .stage{min-height:120px;padding:10px 16px;margin-bottom:8px}
+  .controls{margin-bottom:8px}
+  .key{height:clamp(50px,11vh,72px)}
+  .adult{margin-top:12px}
+}
+
+/* tablets: aproveitar melhor a largura extra */
+@media (min-width:641px) and (max-width:1024px){
+  .wrap{max-width:900px}
+  .key{max-width:104px}
+}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
 }
+
+/* ============ modo sílabas ============ */
+.syl-family{text-align:center;width:100%}
+.syl-title{font-family:'Lilita One',sans-serif;font-size:clamp(1.2rem,4vw,1.8rem);margin-bottom:10px}
+.syl-chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.syl-chip{
+  font-family:'Lilita One',sans-serif;font-size:clamp(1.3rem,4vw,1.9rem);
+  background:#fff3c9;border:3px solid #e0b93c;border-radius:16px;
+  padding:10px 18px;box-shadow:0 5px 0 #cfa707;transition:transform .12s;
+}
+.syl-chip:hover{transform:translateY(-2px)}
+.syl-chip:active,.syl-chip.pop{transform:translateY(3px) scale(1.06);box-shadow:0 2px 0 #cfa707}
+
+.syl-slots{display:flex;gap:10px;justify-content:center;margin:10px 0}
+.syl-slot{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:56px;height:56px;font-family:'Lilita One',sans-serif;font-size:1.8rem;
+  background:#fff;border:3px dashed var(--ink);border-radius:14px;color:var(--ink);
+  transition:background .15s,border-style .15s;
+}
+.syl-slot.filled{border-style:solid;background:#e7fbdc}
 
 /* ============ grade de fonemas completos ============ */
 #phoneme-grid{
